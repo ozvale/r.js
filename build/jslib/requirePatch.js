@@ -465,7 +465,8 @@ define([ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'commonJs', 'prim'
         require.onResourceLoad = function (context, map) {
             var id = map.id,
                 url;
-
+            //if it is a stubed plugin such as text. 
+            var stubed= !map.prifix&&context.config.stubModules.indexOf(map.name)!=-1;
             // Fix up any maps that need to be normalized as part of the fullExec
             // plumbing for plugins to participate in the build.
             if (context.plugins && lang.hasProp(context.plugins, id)) {
@@ -487,7 +488,11 @@ define([ 'env!env/file', 'pragma', 'parse', 'lang', 'logger', 'commonJs', 'prim'
             if (context.needFullExec && getOwn(context.needFullExec, id)) {
                 context.fullExec[id] = map;
             }
-
+            
+            // do not disabled dynamic text load.
+            if(stubed){
+            return;
+            }
             //A plugin.
             if (map.prefix) {
                 if (falseProp(layer.pathAdded, id)) {
